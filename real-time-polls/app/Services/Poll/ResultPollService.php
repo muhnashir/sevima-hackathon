@@ -32,11 +32,30 @@ class ResultPollService extends ServiceBase
         try{
 
             $question = $this->questionRepository->FindWithOptios($this->uuid);
-            $result = $this->pollRepository->FindVotesByQuestionID($question->id);
+            $pollResults = $this->pollRepository->FindVotesByQuestionID($question->id);
 
+            $formattedResults = [
+                'question' => [
+                    'id' => $question->id,
+                    'uuid' => $question->uuid,
+                    'name' => $question->name,
+                    'finish_at' => $question->finish_at,
+                    'options' => $question->options->map(function($option) use ($pollResults, $question) {
+                        $votes = 0;
+                        if (isset($pollResults[$question->id]) && isset($pollResults[$question->id][$option->id])) {
+                            $votes = $pollResults[$question->id][$option->id]->votes;
+                        }
+                        return [
+                            'id' => $option->id,
+                            'name' => $option->name,
+                            'votes' => $votes
+                        ];
+                    })
+                ]
+            ];
 
             return self::success([
-                'result' => $result,
+                'votes' => $formattedResults,
             ], 'success');
 
         }catch (Exception $th) {

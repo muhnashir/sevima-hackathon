@@ -20,16 +20,18 @@ class PollController extends Controller
 
     public function store(Request $request, $uuid)
     {
-//        $service = (new CreatePollService($request->all()))->call();
-//        if($service->status == 422) return back()->withInput()->withError($service->message);
-//        throw_if($service->status != 200, $service->message);
+        $service = (new CreatePollService($request->all()))->call();
+        if($service->status == 422) return back()->withInput()->withError($service->message);
+        throw_if($service->status != 200, $service->message);
 
-        event(new \App\Events\PollCreated($uuid, []));
+        $resultService = (new ResultPollService($uuid))->call();
+        $pollData = $resultService->status == 200 ? $resultService->data : [];
+
+        event(new \App\Events\PollCreated($uuid, $pollData));
 
         return redirect(route('result-poll',[
             "uuid" => $uuid,
-//        ]))->withSuccess($service->message);
-        ]))->withSuccess("berhasil");
+        ]))->withSuccess($service->message);
     }
 
     public function resultPoll($uuid)
@@ -44,8 +46,16 @@ class PollController extends Controller
     {
         $service = (new ResultPollService($uuid))->call();
         abort_if($service->status != 200, 404,$service->message);
-        $data = $service->data;
-        return view('polls.result-poll', compact('data'));
+        if ($service->status != 200) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $service->message
+            ], 404);
+        }
+        return response()->json([
+            'status' => 'success',
+            'data' => $service->data
+        ]);
     }
 
 

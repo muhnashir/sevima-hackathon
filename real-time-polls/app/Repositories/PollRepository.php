@@ -18,7 +18,17 @@ class PollRepository
 
     public function FindVotesByQuestionID(int $question_id)
     {
-        return false;
+        $polls = $this->poll
+            ->where('question_id', $question_id)
+            ->select('question_id', 'question_option_id', \DB::raw('count(1) as votes'))
+            ->groupBy('question_id', 'question_option_id')
+            ->get();
+
+        $groupedPolls = $polls->groupBy('question_id')->map(function ($questionPolls) {
+            return $questionPolls->keyBy('question_option_id');
+        });
+
+        return $groupedPolls;
     }
 
 }
