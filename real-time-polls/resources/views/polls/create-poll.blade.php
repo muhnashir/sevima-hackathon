@@ -9,48 +9,54 @@
 @endpush
 
 @section('content')
-    <div class="page-heading">
-        <h3>Ayo Dijawab Gaess !</h3>
-    </div>
-    <div class="page-content">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-12">
-                    <form class="form" action="{{route('poll.store', ['uuid' => $data['data']->uuid ])}}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('POST')
+    @if(!$data['is_expired'])
+        <div class="page-heading">
+            <h3>Ayo Dijawab Gaess !</h3>
+        </div>
+        <div class="page-content">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-12">
+                        <form class="form" action="{{route('poll.store', ['uuid' => $data['data']->uuid ])}}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            @method('POST')
 
-                        <div class="card shadow-sm">
-                            <div class="card-header bg-primary">
-                                <h4 class="mb-0 text-white">{{ $data['data']->name ?? "Question" }}</h4>
-                                <input type="hidden" name="question" value="{{ $data['data']->id }}">
-                            </div>
-                            <div class="card-body p-4">
-                                <div id="options-container">
-                                    @foreach($data['data']->options as $i => $option)
-                                        @php
-                                            $index = chr(65 + $i);
-                                        @endphp
-                                        <div class="d-flex align-items-center p-3 mb-3 border rounded option-item" onclick="selectOption(this)">
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-primary">
+                                    <h4 class="mb-0 text-white">{{ $data['data']->name ?? "Question" }}</h4>
+                                    <input type="hidden" name="question" value="{{ $data['data']->id }}">
+                                </div>
+                                <div class="card-body p-4">
+                                    <div id="options-container">
+                                        @foreach($data['data']->options as $i => $option)
+                                            @php
+                                                $index = chr(65 + $i);
+                                            @endphp
+                                            <div class="d-flex align-items-center p-3 mb-3 border rounded option-item" onclick="selectOption(this)">
                                                 <span class="fw-bold">{{ $index }}. </span>
-                                            <div class="flex-grow-1"> {{ $option->name }}</div>
-                                            <input type="radio" name="option" value="{{ $option->id }}" class="d-none">
-                                        </div>
-                                    @endforeach
-                                </div>
+                                                <div class="flex-grow-1"> {{ $option->name }}</div>
+                                                <input type="radio" name="option" value="{{ $option->id }}" class="d-none">
+                                            </div>
+                                        @endforeach
+                                    </div>
 
-                                <div class="d-flex justify-content-between mt-4">
-                                    <button type="submit" class="btn btn-primary">
-                                        Lanjutkan<i class="bi bi-arrow-right ms-2"></i>
-                                    </button>
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <button type="submit" class="btn btn-primary">
+                                            Lanjutkan<i class="bi bi-arrow-right ms-2"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @else
+        <div class="page-heading">
+            <h3>Sudah expired gaess !</h3>
+        </div>
+    @endif
 @endsection
 
 @push('scripts')
