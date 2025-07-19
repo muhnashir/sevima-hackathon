@@ -1,0 +1,11 @@
+<?php
+
+namespace {{ namespace }};
+
+enum {{ class }} : string
+{
+
+    const SOME_ATTRIBUTE_A   = 'VALUE_A';
+    const SOME_ATTRIBUTE_B   = 'VALUE_B';
+
+}

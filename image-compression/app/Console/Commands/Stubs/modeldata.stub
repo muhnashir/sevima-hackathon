@@ -1,0 +1,11 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Base\ModelBase;
+
+
+class {{ class }} extends ModelBase
+{
+
+}
