@@ -1,31 +1,27 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Services\Poll;
 
 use App\Base\ServiceBase;
+use App\Repositories\PollRepository;
+use App\Repositories\QuestionRepository;
 use App\Responses\ServiceResponse;
+use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Exception;
 
-class {{ class }} extends ServiceBase
+class ResultPollService extends ServiceBase
 {
-    protected $data;
-    public function __construct(array $data)
+    protected $uuid;
+    protected $pollRepository;
+    protected $questionRepository;
+    public function __construct(string $uuid)
     {
-        $this->data = $data;
+        $this->uuid = $uuid;
+        $this->pollRepository = new PollRepository();
+        $this->questionRepository = new QuestionRepository();
     }
 
-    /**
-     * Validate the data
-     *
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validate() {
-        return Validator::make($this->data, [
-            'something'     => 'required|string|max:255',
-        ]);
-    }
 
     /**
      * main method of this service
@@ -33,16 +29,14 @@ class {{ class }} extends ServiceBase
      * @return ServiceResponse
      */
     public function call(): ServiceResponse {
-
-        // validate the request data
-        if ($this->validate()->fails()) {
-            return self::error($this->validate()->errors()->getMessages(), implode(',',$this->validate()->errors()->all()),422);
-        }
-
         try{
 
+            $question = $this->questionRepository->FindWithOptios($this->uuid);
+            $result = $this->pollRepository->FindVotesByQuestionID($question->id);
+
+
             return self::success([
-                'something' => ''
+                'result' => $result,
             ], 'success');
 
         }catch (Exception $th) {

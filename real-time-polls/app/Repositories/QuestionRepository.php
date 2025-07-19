@@ -13,7 +13,11 @@ class QuestionRepository
     }
 
     public function Create(array $data){
-        return $this->create($data);
+        return $this->question->create($data);
+    }
+
+    public function FindWithOptios($uuid){
+        return $this->question->select(['uuid','id','name', 'finish_at'])->where('uuid', $uuid)->with(['options:id,name,question_id'])->first();
     }
 
 }

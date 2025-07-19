@@ -1,19 +1,23 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Services\Poll;
 
 use App\Base\ServiceBase;
+use App\Repositories\PollRepository;
 use App\Responses\ServiceResponse;
+use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Exception;
 
-class {{ class }} extends ServiceBase
+class CreatePollService extends ServiceBase
 {
     protected $data;
+    protected $pollRepository;
+
     public function __construct(array $data)
     {
         $this->data = $data;
+        $this->pollRepository = new PollRepository();
     }
 
     /**
@@ -21,9 +25,10 @@ class {{ class }} extends ServiceBase
      *
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validate() {
+    protected function validate(){
         return Validator::make($this->data, [
-            'something'     => 'required|string|max:255',
+            'question'           => 'required',
+            'option'    => 'required',
         ]);
     }
 
@@ -41,9 +46,12 @@ class {{ class }} extends ServiceBase
 
         try{
 
-            return self::success([
-                'something' => ''
-            ], 'success');
+            $this->pollRepository->create([
+                "question_id" => $this->data['question'],
+                "question_option_id" => $this->data['option'],
+            ]);
+
+            return self::success(null, 'Berhasil Menjawab Pertanyaan');
 
         }catch (Exception $th) {
 

@@ -9,7 +9,7 @@
 @endpush
 @section('content')
     <div class="page-heading">
-        <h3>Tambah Pertanyaan</h3>
+        <h3>Detail Pertanyaan</h3>
     </div>
     <div class="page-content">
 
@@ -27,17 +27,7 @@
                                         <div class="col-md-6 col-12">
                                             <div class="form-group">
                                                 <label class="form-label">Pertanyaan</label>
-                                                <label class="form-label text-danger">*</label>
-                                                <input type="text" class="form-control" name="name" required
-                                                       placeholder="Masukkan pertanyaan..." value="{{ old('name') }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-12">
-                                            <div class="form-group">
-                                                <label class="form-label">Berlaku Sampai</label>
-                                                <label class="form-label text-danger">*</label>
-                                                <input type="datetime-local" class="form-control flatpickr" name="finish_at" required
-                                                       placeholder="Pilih tanggal dan waktu..." value="{{ old('finish_at') }}">
+                                                <input type="text" class="form-control" name="name" value="{{ $data['data']->name ?? "" }}" readonly>
                                             </div>
                                         </div>
 
@@ -45,55 +35,28 @@
                                         <div class="col-12 mt-3">
                                             <div class="card">
                                                 <div class="card-header">
-                                                    <h4 class="card-title">Pilihan Jawaban</h4>
+                                                    <h4 class="card-title">Opsi Jawaban</h4>
                                                 </div>
                                                 <div class="card-body">
-                                                    <div id="options-container">
-                                                        <div class="row option-row mb-2">
-                                                            <div class="col-1 d-flex align-items-center">
-                                                                <span class="option-label">A</span>
-                                                            </div>
-                                                            <div class="col-10">
-                                                                <input type="text" class="form-control" name="options[]" required placeholder="Masukkan pilihan jawaban...">
-                                                            </div>
-                                                            <div class="col-1 d-flex align-items-center">
-                                                                <button type="button" class="btn btn-danger btn-sm remove-option" disabled>
-                                                                    <i class="bi bi-trash"></i>
-                                                                </button>
+                                                    @foreach($data['data']->options as $i => $option)
+                                                        @php
+                                                            $index = chr(65 + $i);
+                                                        @endphp
+                                                        <div id="options-container">
+                                                            <div class="row option-row mb-2">
+                                                                <div class="col-1 d-flex align-items-center">
+                                                                    <span class="option-label">{{$index}}. </span>
+                                                                    <span class="option-label">{{ $option->name }}</span>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="row option-row mb-2">
-                                                            <div class="col-1 d-flex align-items-center">
-                                                                <span class="option-label">B</span>
-                                                            </div>
-                                                            <div class="col-10">
-                                                                <input type="text" class="form-control" name="options[]" required placeholder="Masukkan pilihan jawaban...">
-                                                            </div>
-                                                            <div class="col-1 d-flex align-items-center">
-                                                                <button type="button" class="btn btn-danger btn-sm remove-option">
-                                                                    <i class="bi bi-trash"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mt-3">
-                                                        <div class="col-12">
-                                                            <button type="button" id="add-option" class="btn btn-primary btn-sm">
-                                                                <i class="bi bi-plus"></i> Tambah Pilihan
-                                                            </button>
-                                                        </div>
-                                                    </div>
+                                                    @endforeach
+                                                </div>
+
+                                                <div class="card-footer">
+                                                    Link URL => {{ config('app.url').'/poll/'.$data['data']->uuid }}
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div class="col-12 d-flex justify-content-end mt-3">
-                                            <button type="submit" class="btn btn-primary me-1 mb-1">
-                                                Simpan
-                                            </button>
-                                            <button type="reset" class="btn btn-light-secondary me-1 mb-1">
-                                                Reset
-                                            </button>
                                         </div>
                                     </div>
                                 </form>

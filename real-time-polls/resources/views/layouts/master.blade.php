@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>TrimHub Indonesia - @yield('title')</title>
+    <title>Real Time Pools - @yield('title')</title>
 
 
     <!-- Meta description for SEO -->
@@ -80,6 +80,32 @@
         <!-- /.footer -->
     </div>
 </div>
+
+<!-- Load traditional JS -->
+<script src="{{ asset('assets/js/bootstrap.js') }}"></script>
+<script src="{{ asset('assets/js/app.js') }}"></script>
+{{--<script>--}}
+{{--    if ('serviceWorker' in navigator) {--}}
+{{--        window.addEventListener('load', () => {--}}
+{{--            navigator.serviceWorker.register('/firebase-messaging-sw.js');--}}
+{{--        });--}}
+{{--    }--}}
+{{--</script>--}}
+
+
+<!-- FORM ELEMENT SELECT -->
+{{--<script src="{{ asset('assets/extensions/choices.js/public/assets/scripts/choices.js') }}"></script>--}}
+
+<script src="{{ asset('assets/js/pages/form-element-select.js') }}"></script>
+<script src="{{ asset('assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
+
+<!-- Date picker -->
+{{--<script src="{{ asset('assets/extensions/flatpickr/flatpickr.min.js') }}"></script>--}}
+{{--<script src="{{ asset('assets/js/pages/date-picker.js') }}"></script>--}}
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+@stack('scripts')
 </body>
 
 </html>
