@@ -16,6 +16,8 @@ return new class extends Migration
             $table->bigInteger('question_id');
             $table->bigInteger('question_option_id');
             $table->timestamps();
+
+            $table->index(['question_id', 'question_option_id'], 'idx_polls_qid_oid');
         });
     }
 
