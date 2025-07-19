@@ -20,13 +20,16 @@ class PollController extends Controller
 
     public function store(Request $request, $uuid)
     {
-        $service = (new CreatePollService($request->all()))->call();
-        if($service->status == 422) return back()->withInput()->withError($service->message);
-        throw_if($service->status != 200, $service->message);
+//        $service = (new CreatePollService($request->all()))->call();
+//        if($service->status == 422) return back()->withInput()->withError($service->message);
+//        throw_if($service->status != 200, $service->message);
+
+        event(new \App\Events\PollCreated($uuid, []));
 
         return redirect(route('result-poll',[
             "uuid" => $uuid,
-        ]))->withSuccess($service->message);
+//        ]))->withSuccess($service->message);
+        ]))->withSuccess("berhasil");
     }
 
     public function resultPoll($uuid)
