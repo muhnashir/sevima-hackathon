@@ -48,34 +48,55 @@
     <script>
         $(document).ready(function() {
             fetchPollResults();
+            setupPusher();
         });
 
         function fetchPollResults() {
+            console.log('Fetching poll results...');
             $.ajax({
                 url: "{{ route('api-result-poll', ['uuid' => $data['data']->uuid]) }}",
                 method: 'GET',
                 success: function(response) {
+                    console.log('Poll results received:', response);
                     if (response.status === 'success') {
                         updatePollResults(response.data.votes.question);
                     }
                 },
                 error: function(error) {
-                    console.log("errr",error)
+                    console.log("Error fetching poll results:", error);
                     console.error('Error fetching poll results:', error);
                 }
             });
         }
 
-        Pusher.logToConsole = true;
-        var pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
-            cluster: '{{ env('PUSHER_APP_CLUSTER') }}'
-        });
+        function setupPusher() {
+            console.log('Setting up Pusher...');
+            console.log('Pusher key:', '{{ env('PUSHER_APP_KEY') }}');
+            console.log('Pusher cluster:', '{{ env('PUSHER_APP_CLUSTER') }}');
 
-        var channel = pusher.subscribe('polls.{{ $data['data']->uuid }}');
-        channel.bind('App\\Events\\PollCreated', function(data) {
-            console.log('New poll data received:', data);
-            fetchPollResults();
-        });
+            Pusher.logToConsole = true;
+            var pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
+                cluster: '{{ env('PUSHER_APP_CLUSTER') }}'
+            });
+
+            var channelName = 'polls.{{ $data['data']->uuid }}';
+            console.log('Subscribing to channel:', channelName);
+            var channel = pusher.subscribe(channelName);
+
+            channel.bind('pusher:subscription_succeeded', function() {
+                console.log('Successfully subscribed to channel:', channelName);
+            });
+
+            channel.bind('pusher:subscription_error', function(error) {
+                console.error('Error subscribing to channel:', error);
+            });
+
+            console.log('Binding to event: poll.created');
+            channel.bind('poll.created', function(data) {
+                console.log('New poll data received:', data);
+                fetchPollResults();
+            });
+        }
         function updatePollResults(question) {
             var resultsContainer = document.getElementById('poll-results');
             resultsContainer.innerHTML = '';
@@ -94,6 +115,7 @@
                     `;
                     resultsContainer.innerHTML += cardHtml;
                 });
+
             }
         }
     </script>

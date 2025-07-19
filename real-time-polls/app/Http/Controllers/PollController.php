@@ -27,7 +27,14 @@ class PollController extends Controller
         $resultService = (new ResultPollService($uuid))->call();
         $pollData = $resultService->status == 200 ? $resultService->data : [];
 
+        \Log::info('Dispatching PollCreated event', [
+            'uuid' => $uuid,
+            'pollData' => $pollData
+        ]);
+
         event(new \App\Events\PollCreated($uuid, $pollData));
+
+        \Log::info('PollCreated event dispatched');
 
         return redirect(route('result-poll',[
             "uuid" => $uuid,
